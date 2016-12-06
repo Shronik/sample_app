@@ -27,10 +27,23 @@ class User < ApplicationRecord
     self.remember_token = User.new_token
     update_attribute(:remember_digest, User.digest(remember_token))
   end
+<<<<<<< HEAD
   def authenticated?(attribute, token)
     digest = send("#{attribute}_digest")
     return false if digest.nil?
     BCrypt::Password.new(digest).is_password?(token)
+=======
+  def activate
+    update_attribute(:activated,    true)
+    update_attribute(:activated_at, Time.zone.now)
+  end
+  def send_activation_email
+    UserMailer.account_activation(self).deliver_now
+  end
+  def authenticated?(remember_token)
+  	return false if remember_digest.nil?
+    BCrypt::Password.new(remember_digest).is_password?(remember_token)
+>>>>>>> account-activation
   end
   def forget
     update_attribute(:remember_digest, nil)
